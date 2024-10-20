@@ -34,4 +34,7 @@ This project is an intelligent chatbot interface that accepts code snippets and 
 ## Future Enchancement
 Further we can fine-tune the model or use RAG to increase the accuracy of the model.
 
+## Deployment
+You can access the live version of the project at the following link:
+https://cyber-hunters-tf-24-uzrw.vercel.app/
 
