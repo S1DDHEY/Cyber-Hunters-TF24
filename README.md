@@ -28,12 +28,6 @@ This project is an intelligent chatbot interface that accepts code snippets and 
 ![WhatsApp Image 2024-10-20 at 11 38 07_8809933d](https://github.com/user-attachments/assets/6817e7b6-f2ce-41da-b0b9-2ca0448af0bd)
 
 
-## Video
-[![Watch the video](https://raw.githubusercontent.com/sir-shivam/Cyber-Hunters-TF24/main/TF_24_demo.mp4)
-
-
-
-
 ## Flowchart
 ![PHOTO-2024-10-20-11-16-44](https://github.com/user-attachments/assets/2a9af929-5c15-440e-958f-f3f2c5396e63)
 
