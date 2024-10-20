@@ -39,55 +39,61 @@ async function fetchGithubFiles(owner, repo) {
 // Route to analyze a GitHub repository
 router.post('/analyze', async (req, res) => {
     const { repoLink } = req.body;
-  
-    // Ensure Octokit is initialized
-    if (!Octokit) {
-      console.log("hello");
-      return res.status(500).json({ error: 'Octokit is not initialized yet. Please try again.' });
+    
+    // Log incoming request for debugging
+    console.log("Request body:", req.body);
+    console.log("Repository Link:", repoLink);
+
+    const token = "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"; // 
+
+    // Validate repoLink and token
+    if (!repoLink || !repoLink.includes('github.com/')) {
+        return res.status(400).json({ error: 'Invalid GitHub repository link.' });
     }
-  
+
+    if (!token) {
+        return res.status(500).json({ error: 'GitHub token is missing.' });
+    }
+
     try {
-      // Extract owner and repo from the GitHub link
-      const [owner, repo] = repoLink.split('github.com/')[1].split('/');
-      const octokit = new Octokit();
-  
-      // Fetch repository metadata
-      const { data: repoData } = await octokit.repos.get({ owner, repo });
-  
-      // Get the list of files in the repository
-      const { data: files } = await octokit.repos.getContent({ owner, repo, path: '' });
-  
-      // Initialize an array to hold the results
-      const results = [];
-  
-      // Fetch content for each file and store in results array
-      const filesWithContent = await Promise.all(files.map(async (file) => {
-        const { data: fileContent } = await octokit.repos.getContent({
-          owner,
-          repo,
-          path: file.path
-        });
-  
-        // Decode file content and add to results array as object
-        results.push({
-          fileName: file.name,
-          fileContent: Buffer.from(fileContent.content, 'base64').toString('utf-8') // Convert content from base64
-        });
-  
-        return {
-          fileName: file.name,
-          fileContent: Buffer.from(fileContent.content, 'base64').toString('utf-8')
-        };
-      }));
-  
-      // Send the results array as a JSON response
-      res.status(200).json({ filesWithContent: results });
-  
+        // Extract owner and repo from the GitHub link
+        const repoPath = repoLink.split('github.com/')[1];
+        const [owner, repo] = repoPath.split('/');
+
+        // Initialize Octokit with authentication
+        const octokit = new Octokit({ auth: token });
+
+        // Fetch repository metadata
+        const repoData = await octokit.repos.get({ owner, repo });
+        console.log("Owner:", owner);
+        console.log("Repository:", repo);
+
+        // Fetch files from the repository
+        const { data: files } = await octokit.repos.getContent({ owner, repo, path: '' });
+
+        // Retrieve content of each file and store results
+        const results = await Promise.all(files.map(async (file) => {
+            const { data: fileContent } = await octokit.repos.getContent({
+                owner,
+                repo,
+                path: file.path
+            });
+
+            // Convert base64 content to string
+            return {
+                fileName: file.name,
+                fileContent: Buffer.from(fileContent.content, 'base64').toString('utf-8')
+            };
+        }));
+
+        // Send the list of files and their content
+        res.status(200).json({ filesWithContent: results });
+
     } catch (error) {
-      console.error('Error fetching GitHub repo:', error);
-      res.status(500).json({ error: 'Error fetching GitHub repository.' });
+        console.error('Error fetching GitHub repo:', error.message);
+        res.status(500).json({ error: 'Error fetching GitHub repository.' });
     }
-  });
+})
   
 
 router.get("/view" ,async(req , res) => {
