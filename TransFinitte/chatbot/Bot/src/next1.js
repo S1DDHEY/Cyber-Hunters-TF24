@@ -8,7 +8,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Loader2, Copy, CheckCircle, Shield, Code, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tooltip from './Toolkit';
-import Button from './Button';
 
 
 
@@ -29,7 +28,7 @@ const App = () => {
   const [copied, setCopied] = useState(null);
   const [repoLink , setRepoLink] = useState(null);
   const chatEndRef = useRef(null);
-  const [fileIndex, setFileIndex] = useState(0); // To track the current file being analyzed
+  const [fileIndex, setFileIndex] = useState(1); // To track the current file being analyzed
   const [repoFiles, setRepoFiles] = useState([]); // Stores files from the GitHub repo
   const inputRef = useRef(null);
   const [isGit , setGit] = useState(false);
@@ -39,9 +38,7 @@ const App = () => {
   const messageRefs = useRef([]);
   console.log(repoFiles);
 
-  const apiKey ="AIzaSyCa4ZuckRjGqLy_KiJl2dfm5n7i6Eqpiy4";
-  
-  // "AIzaSyDxxOvO3DmTqnGIeB8N3IX2vIOTiRZDMVg";
+  const apiKey =process.env.REACT_APP_API_KEY;
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -50,36 +47,10 @@ const App = () => {
   
   const [prompt, setPrompt] = useState('');
 
-  useEffect(() => {
-    const loadPrompt = async () => {
-      try {
-        // Fetch the content of the file
-        const response = await fetch('chatbot/src/Prompts.txt');
-        const promptText = await response.text();
-        setPrompt(promptText); // Set the prompt state
 
-        // Send the loaded prompt to the API
-        const apiKey = 'your-api-key-here';
-        const apiResponse = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`,
-          {
-            contents: [{ parts: [{ text: promptText }] }],
-          },
-          {
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
-
-        console.log('API Response:', apiResponse.data);
-      } catch (error) {
-        console.error('Error loading prompt or sending request:', error);
-      }
-    };
-
-    loadPrompt();
-  }, []);
-
-
+  console.log(messages);
+  console.log(messages);
+  console.log(messages);
 
   const categorizeMessage = (message) => {
     const result = [];
@@ -87,12 +58,14 @@ const App = () => {
     let currentText = '';
 
     const pushSimpleText = () => {
+      if(!currentText){
       if (currentText.trim()) {
         result.push({ type: 'simpletext', words: currentText.trim() });
         currentText = '';  // Reset
-      }
+      }}
     };
-
+    console.log(message);
+    
     const lines = message ? message.split('\n') : [];
     for (let line of lines) {
       line = line.trim(); // Clean up spaces
@@ -165,9 +138,15 @@ const App = () => {
 
 
     const match = input.match(githubRepoRegex);
-    if (match) {
-         setRepoLink( match[0]) };
-    return githubRepoRegex.test(input);
+    if(match) {
+         setRepoLink( match[0]) 
+        return true
+        };
+    if(!match){
+      return false;
+    }
+
+         
   }
 
 
@@ -175,6 +154,7 @@ const App = () => {
     setMessages(prev => [...prev, { type: 'input', content: fileContent }]);
 
     try {
+
       const prompt = `Analyze the following code, detect its language, identify potential vulnerabilities, and suggest fixes with a focus on cybersecurity:
 
       ${fileContent}
@@ -189,7 +169,8 @@ const App = () => {
 
       Security Improvements:
       [Explain how the fixes improve security]`;
-
+         
+      console.log("partsssss");
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`,
         {
@@ -198,11 +179,14 @@ const App = () => {
         { headers: { 'Content-Type': 'application/json' } }
       );
 
-      const output = response.data.candidates[0].content.parts[0].text;
-      const newOutput = categorizeMessage(output);
+
+const output = response.data?.candidates?.[0]?.content?.parts?.[0]?.text; // Access with optional chaining
+      // const output = response.data.candidates[0].content.parts[0].text;
+      console.log(response);
+      // const newOutput = categorizeMessage(output);
       
       console.log(output);
-      setMessages(prev => [...prev, { type: 'output', content: newOutput }]);
+      setMessages(prev => [...prev, { type: 'output', content: output}]);
       setNext(true);
       setInput('');
       
@@ -220,14 +204,23 @@ const App = () => {
 
   const handleNextFile = async () => {
     setNext(false);
+    setFileIndex(fileIndex + 1);
+    console.log(fileIndex);
+    console.log(fileIndex);
+    console.log(fileIndex);
+    console.log(fileIndex);
+    console.log(fileIndex);
+    console.log(fileIndex);
     if (fileIndex < repoFiles.length) {
       setLoading(true);
       if (repoFiles && fileIndex < repoFiles.length) {
         const nextFile = repoFiles[fileIndex];
+        console.log(nextFile);
+        console.log(nextFile);
+        console.log(nextFile.fileContent);
         // Proceed with file analysis
-        await analyzeGitHubFile(nextFile.fileName, nextFile.fileContent);
-        setFileIndex(fileIndex + 1); // Move to the next file
-        setLoading(false);
+        analyzeGitHubFile(nextFile.fileName, nextFile.fileContent);
+        // setFileIndex(fileIndex + 1); // Move to the next file
         console.log("file index done");
       }
     }
@@ -236,10 +229,11 @@ const App = () => {
 
   const fetchGitHubRepo = async (repoLink) => {
     try {
-      const response = await axios.post('http://localhost:3000/git/analyze', { repoLink });
+      setLoading(true);
+      const response = await axios.post('https://cyber-hunters-tf24-3.onrender.com/git/analyze', { repoLink });
       const files = response.data.filesWithContent;
       setRepoFiles(files);
-      console.log("files recieved")
+      console.log(files)
       console.log(files[0].fileContent)
       await analyzeGitHubFile(files[0].fileName, files[0].fileContent);
 
@@ -256,6 +250,7 @@ const App = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setRepoFiles([])
     console.log(input.trim());
     if (!input.trim()) return;
 
@@ -306,9 +301,8 @@ const App = () => {
 
       const output = response.data.candidates[0].content.parts[0].text;
 
-      const newOutput = categorizeMessage(output);
 
-      setMessages(prev => [...prev, { type: 'output', content: newOutput }]);
+      setMessages(prev => [...prev, { type: 'output', content: output }]);
     } catch (error) {
       setError(true);
       console.error('Error processing the code with Chatbot:', error);
@@ -379,7 +373,7 @@ const App = () => {
         <strong>{msg.type === 'input' ? 'You:' : 'Bot:'}</strong> 
         {msg.type === 'input'
         ? msg.content.substring(0, 50) // For input, show the first 20 characters
-        : msg.content[0]?.words.substring(0, 50) // For output, safely access the first item's words and truncate
+        : msg.content.substring(0, 50) // For output, safely access the first item's words and truncate
       }...
                 </motion.div>
               ))
@@ -418,15 +412,15 @@ const App = () => {
                     {message.type === 'input' && (
                       <div className="mb-2 bgp"  >
                         <strong>Your Input:</strong>
-                        <SyntaxHighlighter language={message.language || "text"}  style={vscDarkPlus }>
+                        {/* <SyntaxHighlighter language={message.language || "text"}  style={vscDarkPlus }> */}
                           {message.content}
-                        </SyntaxHighlighter>
+                        {/* </SyntaxHighlighter> */}
                         {/* <p className="text-sm  text-gray-400 mt-1">Detected language: {message.language}</p> */}
                       </div>
                     )}
                     {message.type === 'output' && (
                       
-                      isError? (
+                      isGit? (
                         <div>
                           <div className="mt-2 relative">
                             <SyntaxHighlighter language={message.language || 'javascript'} style={vscDarkPlus}>
@@ -440,112 +434,21 @@ const App = () => {
                           </div>
                         </div>
                       ):(
+
+                        <div>
+                          <div className="mt-2 relative">
+                            <SyntaxHighlighter language={message.language || 'javascript'} style={vscDarkPlus}>
+                              {message.content}
+                            </SyntaxHighlighter>
+                            <CopyToClipboard text={message.content} onCopy={() => handleCopy(index)}>
+                              <button className="absolute top-2 right-2 p-1 bg-gray-600 rounded text-white hover:bg-gray-500 transition-colors">
+                                {copied === index ? <CheckCircle size={18} /> : <Copy size={18} />}
+                              </button>
+                            </CopyToClipboard>
+                          </div>
+                        </div>
                       
-                        <div className="bg-gray-900 text-white p-4 rounded-lg">
-      <strong >Chatbot Response:</strong>
-      {message.content.map((item, index) => {
-        if (item.type === 'codesnippet') {
-          return (
-            <div key={index} className="my-4">
-              <SyntaxHighlighter language="javascript" style={vscDarkPlus}>
-                {item.words}
-              </SyntaxHighlighter>
-            </div>
-          );
-        }
-
-        if (item.type === 'h2') {
-          return (
-            <h2 key={index} className="text-2xl font-semibold my-4">
-              {item.words}
-            </h2>
-          );
-        }
-
-        if (item.type === 'h3') {
-          return (
-            <h3 key={index} className="text-xl font-bold my-2">
-              {item.words}
-            </h3>
-          );
-        }
-
-        if (item.type === 'list') {
-          return (
-            <li key={index} className="ml-4 list-disc my-2" >
-              {item.words}
-            </li>
-          );
-        }
-
-        return (
-          <p key={index} className="my-4">
-            {item.words}
-          </p>
-        );
-      })}
-    </div>
-                      )      
-                        // <div>
-                        //   <div className="mt-2 relative">
-                        //     <SyntaxHighlighter language={message.language || 'javascript'}  style={vscDarkPlus }>
-                        //       {message.content}
-                        //     </SyntaxHighlighter >
-                        //     <CopyToClipboard text={message.content} onCopy={() => handleCopy(index)}>
-                        //       <button className="absolute top-2 right-2 p-1 bg-gray-600 rounded text-white hover:bg-gray-500 transition-colors">
-                        //         {copied === index ? <CheckCircle size={18} /> : <Copy size={18} />}
-                        //       </button>
-                        //     </CopyToClipboard>
-                        //   </div>
-                        // </div>
-                      
-                      
-
-    //                   <div>
-    //                     
-
-    //   {message.content.map((item, index) => {
-    //     switch (item.type) {
-    //       case 'h2':
-    //         return (
-    //           <h2 key={index} className="text-xl font-semibold my-2">
-    //             {item.words}
-    //           </h2>
-    //         );
-    //       case 'h3':
-    //         return (
-    //           <h3 key={index} className="text-lg font-bold my-1">
-    //             {item.words}
-    //           </h3>
-    //         );
-    //       case 'list':
-    //         return (
-    //           <li key={index} className="ml-4 list-disc">
-    //             {item.words}
-    //           </li>
-    //         );
-    //       case 'codesnippet':
-    //         return (
-    //           <div key={index} className="my-3 relative">
-    //             <SyntaxHighlighter language="javascript" style={vscDarkPlus}>
-    //               {item.words}
-    //             </SyntaxHighlighter>
-    //           </div>
-    //         );
-    //       default:
-    //         return (
-    //           <p key={index} className="text-white my-1">
-    //             {item.words}
-    //           </p>
-    //         );
-    //     }
-    //   })}
-    // </div>
-
-    
-
-
-                      
+                      )                 
                     )}
                   </motion.div>
                 ))
