@@ -27,6 +27,9 @@ This project is an intelligent chatbot interface that accepts code snippets and 
 ## Screenshots
 ![WhatsApp Image 2024-10-20 at 11 38 07_8809933d](https://github.com/user-attachments/assets/6817e7b6-f2ce-41da-b0b9-2ca0448af0bd)
 
+## Demo Video
+https://github.com/user-attachments/assets/481fda65-74de-47fd-b550-c9802bf4b60a
+
 
 ## Flowchart
 ![PHOTO-2024-10-20-11-16-44](https://github.com/user-attachments/assets/2a9af929-5c15-440e-958f-f3f2c5396e63)
@@ -37,4 +40,7 @@ Further we can fine-tune the model or use RAG to increase the accuracy of the mo
 ## Deployment
 You can access the live version of the project at the following link:
 https://cyber-hunters-tf-24-uzrw.vercel.app/
+
+
+
 
