@@ -38,7 +38,7 @@ const App = () => {
   const messageRefs = useRef([]);
   console.log(repoFiles);
 
-  const apiKey =process.env.REACT_APP_API_KEY;
+  const apiKey ="AIzaSyDxxOvO3DmTqnGIeB8N3IX2vIOTiRZDMVg";
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
