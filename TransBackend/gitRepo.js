@@ -1,28 +1,24 @@
 const express = require('express');
 const axios = require('axios'); // Import axios
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables from .env file
+
 let Octokit;
 (async () => {
     const module = await import('@octokit/rest');
     Octokit = module.Octokit;  // Make Octokit globally accessible
 })();
 
-
 const router = express.Router();
-
 const GITHUB_API_URL = 'https://api.github.com';
 
 // Helper function to fetch files from a GitHub repository
-async function fetchGithubFiles(owner, repo) {
+async function fetchGithubFiles(owner, repo, token) {
     const apiUrl = `${GITHUB_API_URL}/repos/${owner}/${repo}/contents`;
-    // const token = "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" ;
-    const token = process.env.GITHUB_API_TOKEN ;
-    
 
     try {
         const response = await axios.get(apiUrl, {
             headers: {
-                Authorization: `token ${token}`,
+                Authorization: `Bearer ${token}`,  // Use Bearer for authentication
             },
         });
 
@@ -34,8 +30,6 @@ async function fetchGithubFiles(owner, repo) {
     }
 }
 
-
-
 // Route to analyze a GitHub repository
 router.post('/analyze', async (req, res) => {
     const { repoLink } = req.body;
@@ -44,7 +38,7 @@ router.post('/analyze', async (req, res) => {
     console.log("Request body:", req.body);
     console.log("Repository Link:", repoLink);
 
-    const token = "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"; // 
+    const token = process.env.GITHUB_API_TOKEN
 
     // Validate repoLink and token
     if (!repoLink || !repoLink.includes('github.com/')) {
@@ -93,11 +87,8 @@ router.post('/analyze', async (req, res) => {
         console.error('Error fetching GitHub repo:', error.message);
         res.status(500).json({ error: 'Error fetching GitHub repository.' });
     }
-})
-  
+});
 
-router.get("/view" ,async(req , res) => {
-    res.send("working on git");
-} )
+
 
 module.exports = router;
