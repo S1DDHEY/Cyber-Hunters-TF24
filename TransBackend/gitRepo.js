@@ -16,7 +16,7 @@ const GITHUB_API_URL = 'https://api.github.com';
 async function fetchGithubFiles(owner, repo) {
     const apiUrl = `${GITHUB_API_URL}/repos/${owner}/${repo}/contents`;
     // const token = "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" ;
-    const token = "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" ;
+    const token = process.env.GITHUB_API_TOKEN ;
     
 
     try {
