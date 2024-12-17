@@ -41,6 +41,20 @@ Further we can fine-tune the model or use RAG to increase the accuracy of the mo
 You can access the live version of the project at the following link:
 https://cyber-hunters-tf-24-uzrw.vercel.app/
 
+## Hackathon Achievement
+Placement: 2nd Place in TRANSFINITTE '24 Hackathon
+Overview: This project was developed as part of the [TRANSFINITTE '24 Hackathon](https://transfinitte.com/), where we competed against talented developers and innovated solutions to [CyWreck-Problem Statement pg(21)](https://drive.google.com/file/d/1ABFIgrlRrjp29Nm5wRktYCnuqQn5jDBJ/view)
+
+## Team
+| Name             |Github Profile    |
+|------------------|------------------|
+|Siddhey Patil     |@S1DDHEY          |
+|Shivam Gupta      |@sir-shivam       |
+|Vinay Aher        |@VinayAher        |
+|Tejas Salunkhe    |@tejassalunkhe2806|
+|Shivansh          |@shivansh482      |
+
+
 
 
 
