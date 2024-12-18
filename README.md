@@ -43,16 +43,17 @@ https://cyber-hunters-tf-24-uzrw.vercel.app/
 
 ## Hackathon Achievement
 Placement: 2nd Place in TRANSFINITTE '24 Hackathon
+
 Overview: This project was developed as part of the [TRANSFINITTE '24 Hackathon](https://transfinitte.com/), where we competed against talented developers and innovated solutions to [CyWreck-Problem Statement pg(21)](https://drive.google.com/file/d/1ABFIgrlRrjp29Nm5wRktYCnuqQn5jDBJ/view)
 
 ## Team
 | Name             |Github Profile    |
 |------------------|------------------|
-|Siddhey Patil     |@S1DDHEY          |
-|Shivam Gupta      |@sir-shivam       |
-|Vinay Aher        |@VinayAher        |
-|Tejas Salunkhe    |@tejassalunkhe2806|
-|Shivansh          |@shivansh482      |
+|Siddhey Patil     |[@S1DDHEY](https://github.com/S1DDHEY)|
+|Shivam Gupta      |[@sir-shivam](https://github.com/sir-shivam)|
+|Vinay Aher        |[@VinayAher](https://github.com/VinayAher)|
+|Tejas Salunkhe    |[@tejassalunkhe2806](https://github.com/tejassalunkhe2806)|
+|Shivansh          |[@shivansh482](https://github.com/shivansh482)|
 
 
 
